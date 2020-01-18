@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Ирина Редькина](https://up.htmlacademy.ru/javascript/19/user/613475).
-* Наставник: `Неизвестно`.
+* Наставник: [Николай Селин](https://htmlacademy.ru/profile/id92528).
 
 ---
 

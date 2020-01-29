@@ -50,8 +50,9 @@ var getRandomNumber = function (min, max) {
   return Math.floor(min + Math.random() * (max - min + 1));
 };
 
-var getRandomIndex = function (arr) {
-  return Math.floor(Math.random() * arr.length);
+var getRandomElement = function (arr) {
+  var index = Math.floor(Math.random() * arr.length);
+  return arr[index];
 };
 
 var getRandomLengthArray = function (arr) {
@@ -68,10 +69,6 @@ var getRandomLengthArray = function (arr) {
   }
 
   return randomArray;
-};
-
-var getRandomElement = function (arr) {
-  return arr[getRandomIndex(arr)];
 };
 
 var generateAd = function (offerInfo, avatarFileNumber) {

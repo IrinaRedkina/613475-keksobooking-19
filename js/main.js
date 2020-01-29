@@ -8,16 +8,19 @@ var OFFER = {
   'TYPE': ['palace', 'flat', 'house', 'bungalo']
 };
 
-var PINS_QUANTITY = 8;
+var ADS_COUNT = 8;
 
 var mapElement = document.querySelector('.map');
 mapElement.classList.remove('map--faded');
 
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 var mapPins = document.querySelector('.map__pins');
-var widthMapPins = mapPins.offsetWidth;
 
-var getSizeHiddenElement = function () {
+
+/*
+ *  получение размера карты и метки
+ */
+var getHiddenElementSize = function () {
   var hiddenElement = pinTemplate.cloneNode();
   hiddenElement.setAttribute('style', 'opcity: 0; z-index: -1000; position: absolute;');
   mapElement.appendChild(hiddenElement);
@@ -30,9 +33,19 @@ var getSizeHiddenElement = function () {
   return {'width': width, 'height': height};
 };
 
-var pinSize = getSizeHiddenElement();
+var pinSize = getHiddenElementSize();
+var pinSizeWidthHalf = pinSize.width / 2;
+
+var mapPinsWidth = mapPins.offsetWidth;
+var mapPinsFromY = 130;
+var mapPinsToY = 630;
+var mapPinsFromX = pinSizeWidthHalf;
+var mapPinsToX = mapPinsWidth - pinSizeWidthHalf;
 
 
+/*
+ *  генерация объявлений
+ */
 var getRandomNumber = function (min, max) {
   return Math.floor(min + Math.random() * (max - min + 1));
 };
@@ -41,13 +54,13 @@ var getRandomIndex = function (arr) {
   return Math.floor(Math.random() * arr.length);
 };
 
-var getRandomArrayLength = function (arr) {
+var getRandomLengthArray = function (arr) {
   var randomArray = [];
 
   for (var i = 0; i < arr.length; i++) {
-    var randomNamber = getRandomNumber(1, 100);
+    var randomNumber = getRandomNumber(1, 100);
 
-    if (randomNamber % 2 === 0) {
+    if (randomNumber % 2 === 0) {
       randomArray.push(arr[i]);
     } else {
       continue;
@@ -57,7 +70,11 @@ var getRandomArrayLength = function (arr) {
   return randomArray;
 };
 
-var generateObjectWithRandomData = function (data, avatarFileNumber) {
+var getRandomElement = function (arr) {
+  return arr[getRandomIndex(arr)];
+};
+
+var generateAd = function (offerInfo, avatarFileNumber) {
   var object = {
     'author': {
       'avatar': 'img/avatars/user0' + avatarFileNumber + '.png'
@@ -68,15 +85,15 @@ var generateObjectWithRandomData = function (data, avatarFileNumber) {
       'price': 10000000,
       'rooms': 3,
       'guests': 4,
-      'type': data.TYPE[getRandomIndex(data.TYPE)],
-      'checkin': data.CHECKIN[getRandomIndex(data.CHECKIN)],
-      'checkout': data.CHECKOUT[getRandomIndex(data.CHECKOUT)],
-      'features': getRandomArrayLength(data.FEATURES),
-      'photos': getRandomArrayLength(data.PHOTOS)
+      'type': getRandomElement(offerInfo.TYPE),
+      'checkin': getRandomElement(offerInfo.CHECKIN),
+      'checkout': getRandomElement(offerInfo.CHECKOUT),
+      'features': getRandomLengthArray(offerInfo.FEATURES),
+      'photos': getRandomLengthArray(offerInfo.PHOTOS)
     },
     'location': {
-      'x': getRandomNumber(pinSize.width / 2, widthMapPins - pinSize.width / 2),
-      'y': getRandomNumber(130, 630)
+      'x': getRandomNumber(mapPinsFromX, mapPinsToX),
+      'y': getRandomNumber(mapPinsFromY, mapPinsToY)
     }
   };
 
@@ -84,40 +101,41 @@ var generateObjectWithRandomData = function (data, avatarFileNumber) {
   return object;
 };
 
-var generateDataArray = function (quantity) {
+var generateAds = function (count) {
   var objects = [];
-  var avatarFileNumber = 1;
 
-  for (var i = 0; i < quantity; i++) {
-    var object = generateObjectWithRandomData(OFFER, avatarFileNumber);
+  for (var i = 1; i <= count; i++) {
+    var object = generateAd(OFFER, i);
     objects.push(object);
-    avatarFileNumber++;
   }
 
   return objects;
 };
 
-var createElement = function (object) {
+
+/*
+ *  Создание и вывод DOM элементов меток
+ */
+var createPin = function (objectPin) {
   var element = pinTemplate.cloneNode(true);
 
-  element.style.top = (object.location.y - pinSize.height) + 'px';
-  element.style.left = (object.location.x - pinSize.width / 2) + 'px';
-  element.querySelector('img').setAttribute('src', object.author.avatar);
-  element.querySelector('img').setAttribute('alt', object.offer.title);
+  element.style.top = (objectPin.location.y - pinSize.height) + 'px';
+  element.style.left = (objectPin.location.x - pinSizeWidthHalf) + 'px';
+  element.querySelector('img').setAttribute('src', objectPin.author.avatar);
+  element.querySelector('img').setAttribute('alt', objectPin.offer.title);
 
   return element;
 };
 
-var renderElements = function (data, wrapperElement) {
+var renderPins = function (pins, wrapperElement) {
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < data.length; i++) {
-    fragment.appendChild(createElement(data[i]));
+  for (var i = 0; i < pins.length; i++) {
+    fragment.appendChild(createPin(pins[i]));
   }
 
   wrapperElement.appendChild(fragment);
 };
 
-
-var pins = generateDataArray(PINS_QUANTITY);
-renderElements(pins, mapPins);
+var pins = generateAds(ADS_COUNT);
+renderPins(pins, mapPins);

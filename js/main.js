@@ -151,7 +151,7 @@ renderPins(ads, mapPins);
  *  Создание и вывод объявления
  */
 
-var getPriceFormat = function (price) {
+var getFormatPrice = function (price) {
   return price + '₽/ночь';
 };
 
@@ -180,7 +180,6 @@ var getElementTranslation = function (arr, arrRus, key) {
 };
 
 var createPhotosElements = function (photosWrapper, photos) {
-
   var fragment = document.createDocumentFragment();
   var photoTemplate = photosWrapper.querySelector('img');
 
@@ -200,7 +199,7 @@ var createCardAdvert = function (advert) {
   var guestsString = getWordDeclension(advert.offer.guests, ['гостя', 'гостей', 'гостей']);
 
   element.querySelector('.popup__avatar').setAttribute('src', advert.author.avatar);
-  element.querySelector('.popup__text--price').innerText = getPriceFormat(advert.offer.price);
+  element.querySelector('.popup__text--price').innerText = getFormatPrice(advert.offer.price);
   element.querySelector('.popup__title').innerText = advert.offer.title;
   element.querySelector('.popup__description').innerText = advert.offer.description;
   element.querySelector('.popup__text--address').innerText = advert.offer.address;

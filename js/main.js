@@ -40,6 +40,9 @@ var selectType = adForm.querySelector('select[name=type]');
 var inputPrice = adForm.querySelector('input[name=price]');
 var selectTimein = adForm.querySelector('select[name=timein]');
 var selectTimeout = adForm.querySelector('select[name=timeout]');
+var selectRooms = adForm.querySelector('select[name=rooms]');
+var selectCapacity = adForm.querySelector('select[name=capacity]');
+var selectCapacityOptions = selectCapacity.options;
 
 /*
  *  получение размера карты и меток
@@ -166,6 +169,63 @@ inputAddress.setAttribute('readonly', 'readonly');
 setAddressValue(inputAddress, 'circle');
 
 // зависимость кол-ва гостей от кол-ва комнат
+var getAllowedValues = function (numberRooms) {
+  var allowedValues = [];
+
+  switch (numberRooms) {
+    case '1':
+      allowedValues.push('1');
+      break;
+    case '2':
+      allowedValues.push('1', '2');
+      break;
+    case '3':
+      allowedValues.push('1', '2', '3');
+      break;
+    case '100':
+      allowedValues.push('0');
+      break;
+  }
+
+  return allowedValues;
+};
+
+var validateSelectCapacity = function (allowedValues) {
+  if (allowedValues.indexOf(selectCapacity.value) === -1) {
+    selectCapacity.setCustomValidity('Выбирайте другое кол-во комнат или гостей');
+  } else {
+    selectCapacity.setCustomValidity('');
+  }
+};
+
+var lockSelectCapacityOptions = function (allowedValues) {
+  for (var i = 0; i < selectCapacityOptions.length; i++) {
+    if (allowedValues.indexOf(selectCapacityOptions[i].value) === -1) {
+      selectCapacityOptions[i].disabled = true;
+    } else {
+      selectCapacityOptions[i].disabled = false;
+    }
+  }
+};
+
+var onSelectRoomsChange = function (evt) {
+  var allowedValues = getAllowedValues(evt.target.value);
+  validateSelectCapacity(allowedValues);
+  lockSelectCapacityOptions(allowedValues);
+};
+
+var onSelectCapacityChange = function () {
+  var allowedValues = getAllowedValues(selectRooms.value);
+  validateSelectCapacity(allowedValues);
+};
+
+var allowedValues = getAllowedValues(selectRooms.value);
+validateSelectCapacity(allowedValues);
+lockSelectCapacityOptions(allowedValues);
+
+selectRooms.addEventListener('change', onSelectRoomsChange);
+selectCapacity.addEventListener('change', onSelectCapacityChange);
+
 
 /*
  * Вспомогательные функции

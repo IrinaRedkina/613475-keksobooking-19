@@ -2,8 +2,12 @@
 
 (function () {
 
-  var TYPES = ['palace', 'flat', 'house', 'bungalo'];
-  var TYPES_RUS = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
+  var TYPES = {
+    'palace': 'Дворец',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'bungalo': 'Бунгало'
+  };
 
   var cardAdvertTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
@@ -38,14 +42,7 @@
     element.querySelector('.popup__text--capacity').innerText = roomsAndGuestsString;
 
     // тип жилья
-    var typeWrapper = element.querySelector('.popup__type');
-    var typeRus = window.util.getElementTranslation(TYPES, TYPES_RUS, advert.offer.type);
-
-    if (typeRus === false) {
-      typeWrapper.style.display = 'none';
-    } else {
-      typeWrapper.innerText = typeRus;
-    }
+    element.querySelector('.popup__type').innerText = TYPES[advert.offer.type];
 
     // удобства
     var featuresWrapper = element.querySelector('.popup__features');

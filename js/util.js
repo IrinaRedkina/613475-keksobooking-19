@@ -82,16 +82,6 @@
     return word;
   };
 
-  var getElementTranslation = function (arr, arrRus, key) {
-    var object = {};
-
-    for (var i = 0; i < arr.length; i++) {
-      object[arr[i]] = (arrRus[i] !== undefined) ? arrRus[i] : arr[i];
-    }
-
-    return (typeof object[key] !== 'undefined') ? object[key] : false;
-  };
-
   var setInputValue = function (inputElement, value) {
     inputElement.setAttribute('value', value);
   };
@@ -121,7 +111,6 @@
     getRandomLengthArray: getRandomLengthArray,
     getHiddenElementSize: getHiddenElementSize,
     getWordDeclension: getWordDeclension,
-    getElementTranslation: getElementTranslation,
     changeAttrDisabled: changeAttrDisabled,
     setInputValue: setInputValue,
     coordinatorMapsStart: coordinatorMapsStart,

@@ -7,9 +7,10 @@
   var pinSize = window.util.getHiddenElementSize(pinTemplate);
   var pinSizeWidthHalf = pinSize.width / 2;
 
-  var createPin = function (advert) {
+  var createPin = function (advert, id) {
     var element = pinTemplate.cloneNode(true);
 
+    element.setAttribute('id', id);
     element.style.top = (advert.location.y - pinSize.height) + 'px';
     element.style.left = (advert.location.x - pinSizeWidthHalf) + 'px';
     element.querySelector('img').setAttribute('src', advert.author.avatar);
@@ -22,7 +23,7 @@
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < adverts.length; i++) {
-      fragment.appendChild(createPin(adverts[i]));
+      fragment.appendChild(createPin(adverts[i], i));
     }
 
     wrapperElement.appendChild(fragment);

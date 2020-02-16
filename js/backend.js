@@ -41,12 +41,7 @@
     });
 
     xhr.open(method, url);
-
-    if (data === null) {
-      xhr.send();
-    } else {
-      xhr.send(data);
-    }
+    xhr.send(data);
   };
 
   var load = function (onLoad, onError) {

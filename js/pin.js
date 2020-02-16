@@ -10,7 +10,7 @@
   var createPin = function (advert, id) {
     var element = pinTemplate.cloneNode(true);
 
-    element.setAttribute('id', id);
+    element.setAttribute('data-id', id);
     element.style.top = (advert.location.y - pinSize.height) + 'px';
     element.style.left = (advert.location.x - pinSizeWidthHalf) + 'px';
     element.querySelector('img').setAttribute('src', advert.author.avatar);

@@ -3,6 +3,7 @@
 (function () {
 
   var ENTER_KEY = 'Enter';
+  var ESC_KEY = 'Escape';
   var LEFT_MOUSE_KEY = 0;
 
   var mapPins = document.querySelector('.map__pins');
@@ -21,6 +22,12 @@
   var isEnterEvent = function (evt, action) {
     if (evt.key === ENTER_KEY) {
       action();
+    }
+  };
+
+  var isEscEvent = function (evt, action) {
+    if (evt.key === ESC_KEY) {
+      action(evt);
     }
   };
 
@@ -116,6 +123,7 @@
     coordinatorMapsStart: coordinatorMapsStart,
     coordinatorMapsEnd: coordinatorMapsEnd,
     isEnterEvent: isEnterEvent,
+    isEscEvent: isEscEvent,
     isLeftMauseKeyEvent: isLeftMauseKeyEvent
   };
 

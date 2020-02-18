@@ -14,6 +14,8 @@
   var allGroupsFields = [adFieldsets, filterFieldsets, filterFields];
   var inputAddress = adForm.querySelector('input[name=address]');
 
+  var errorText = 'Объявления не доступны.';
+
   /*
    * Активация, деактивация страницы
    */
@@ -49,7 +51,19 @@
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
     mainPin.removeEventListener('keydown', onMainPinKeydown);
 
-    window.pin.render(window.data.adverts, mapPins);
+    var onError = function (error) {
+      var errorMessage = document.createElement('div');
+      errorMessage.innerText = errorText + ' ' + error;
+      errorMessage.style = 'color: #fff; padding: 15px; font-size: 12px; font-weight: 500; text-align: center;';
+      filterForm.style.display = 'none';
+      document.querySelector('.map__filters-container').replaceChild(errorMessage, filterForm);
+    };
+
+    var onSuccess = function (adverts) {
+      window.pin.render(adverts, mapPins);
+    };
+
+    window.backend.load(onSuccess, onError);
   };
 
 

@@ -3,28 +3,58 @@
 (function () {
 
   var map = document.querySelector('.map');
-  var mapPins = map.querySelector('.map__pins');
   var mainPin = map.querySelector('.map__pin--main');
 
   var adForm = document.querySelector('.ad-form');
-  var filterForm = document.querySelector('.map__filters');
+  var filterForm = map.querySelector('.map__filters');
   var adFieldsets = adForm.querySelectorAll('fieldset');
+  var buttons = adForm.querySelectorAll('button');
   var filterFieldsets = filterForm.querySelectorAll('fieldset');
   var filterFields = filterForm.querySelectorAll('.map__filter');
-  var allGroupsFields = [adFieldsets, filterFieldsets, filterFields];
-  var inputAddress = adForm.querySelector('input[name=address]');
+  var allGroupsFields = [adFieldsets, filterFieldsets, filterFields, buttons];
+  var filtersContainer = map.querySelector('.map__filters-container');
+  var inputAddress = document.querySelector('input[name=address]');
 
-  var errorText = 'Объявления не доступны.';
+  var stylesError = 'color: #fff; padding: 15px; font-size: 12px; font-weight: 500; text-align: center';
+
+  var defaultCoord = window.address.getMainPinCoord('circle');
+  var mainPinSize = window.address.mainPinSize;
+
+
+  /*
+  * Обработка ответа сервера
+  */
+  var onError = function (textError) {
+    var error = document.createElement('div');
+    error.innerText = textError;
+    error.style = stylesError;
+    filtersContainer.replaceChild(error, filterForm);
+
+    setTimeout(function () {
+      filtersContainer.remove();
+    }, 10000);
+  };
+
+  var onSuccess = function (data) {
+    window.pin.render(data);
+    window.pin.click(data);
+  };
+
 
   /*
    * Активация, деактивация страницы
    */
-  var onMainPinMousedown = function (evt) {
-    window.util.isLeftMauseKeyEvent(evt, activatePage);
-  };
+  var activatePage = function () {
+    adForm.classList.remove('ad-form--disabled');
+    filterForm.classList.remove('map__filters--disabled');
+    map.classList.remove('map--faded');
 
-  var onMainPinKeydown = function (evt) {
-    window.util.isEnterEvent(evt, activatePage);
+    window.util.changeAttrDisabled(allGroupsFields, 'remove');
+
+    mainPin.removeEventListener('mousedown', window.address.onMousedown);
+    mainPin.removeEventListener('keydown', window.address.onKeydown);
+
+    window.backend.load(onSuccess, onError);
   };
 
   var deactivatePage = function () {
@@ -34,42 +64,25 @@
 
     window.util.changeAttrDisabled(allGroupsFields, 'set');
 
-    mainPin.addEventListener('mousedown', onMainPinMousedown);
-    mainPin.addEventListener('keydown', onMainPinKeydown);
+    mainPin.addEventListener('mousedown', window.address.onMousedown);
+    mainPin.addEventListener('keydown', window.address.onKeydown);
+
+    window.pin.remove();
+    window.card.close();
+
+    mainPin.style.left = (defaultCoord.x - mainPinSize.circle.widthHalf) + 'px';
+    mainPin.style.top = (defaultCoord.y - mainPinSize.circle.heightHalf) + 'px';
+
+    window.util.setInputValue(inputAddress, defaultCoord.x + ', ' + defaultCoord.y);
   };
 
   deactivatePage();
 
-  var activatePage = function () {
-    adForm.classList.remove('ad-form--disabled');
-    filterForm.classList.remove('map__filters--disabled');
-    map.classList.remove('map--faded');
-
-    window.util.setInputValue(inputAddress, window.address.getMainPinCoord('sharp'));
-    window.util.changeAttrDisabled(allGroupsFields, 'remove');
-
-    mainPin.removeEventListener('mousedown', onMainPinMousedown);
-    mainPin.removeEventListener('keydown', onMainPinKeydown);
-
-    var onError = function (error) {
-      var errorMessage = document.createElement('div');
-      errorMessage.innerText = errorText + ' ' + error;
-      errorMessage.style = 'color: #fff; padding: 15px; font-size: 12px; font-weight: 500; text-align: center;';
-      filterForm.style.display = 'none';
-      document.querySelector('.map__filters-container').replaceChild(errorMessage, filterForm);
-    };
-
-    var onSuccess = function (adverts) {
-      window.pin.render(adverts, mapPins);
-    };
-
-    window.backend.load(onSuccess, onError);
-  };
-
 
   window.map = {
     deactivatePage: deactivatePage,
-    activatePage: activatePage
+    activatePage: activatePage,
+    isPageActive: false
   };
 
 })();

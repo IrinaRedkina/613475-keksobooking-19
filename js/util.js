@@ -2,9 +2,11 @@
 
 (function () {
 
-  var ENTER_KEY = 'Enter';
-  var ESC_KEY = 'Escape';
-  var LEFT_MOUSE_KEY = 0;
+  var Key = {
+    ENTER: 'Enter',
+    ESC: 'Escape',
+    MOUSE_LEFT: 0
+  };
 
   var mapPins = document.querySelector('.map__pins');
   var mapPinsWidth = mapPins.offsetWidth;
@@ -20,19 +22,19 @@
   };
 
   var isEnterEvent = function (evt, action) {
-    if (evt.key === ENTER_KEY) {
-      action();
+    if (evt.key === Key.ENTER) {
+      action(evt);
     }
   };
 
   var isEscEvent = function (evt, action) {
-    if (evt.key === ESC_KEY) {
+    if (evt.key === Key.ESC) {
       action(evt);
     }
   };
 
   var isLeftMauseKeyEvent = function (evt, action) {
-    if (evt.button === LEFT_MOUSE_KEY) {
+    if (evt.button === Key.MOUSE_LEFT) {
       action();
     }
   };
@@ -124,7 +126,8 @@
     coordinatorMapsEnd: coordinatorMapsEnd,
     isEnterEvent: isEnterEvent,
     isEscEvent: isEscEvent,
-    isLeftMauseKeyEvent: isLeftMauseKeyEvent
+    isLeftMauseKeyEvent: isLeftMauseKeyEvent,
+    Key: Key
   };
 
 })();

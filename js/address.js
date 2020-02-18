@@ -3,15 +3,20 @@
 (function () {
 
   var MAIN_PIN_SHARP_END_HEIGHT = 22;
-  var mainPin = document.querySelector('.map__pin--main');
+  var map = document.querySelector('.map');
+  var mainPin = map.querySelector('.map__pin--main');
+  var inputAddress = document.querySelector('input[name=address]');
 
   var mainPinSize = {
     'circle': {
       'width': mainPin.offsetWidth,
-      'height': mainPin.offsetHeight
+      'widthHalf': mainPin.offsetWidth / 2,
+      'height': mainPin.offsetHeight,
+      'heightHalf': mainPin.offsetHeight / 2
     },
     'sharp': {
       'width': mainPin.offsetWidth,
+      'widthHalf': Math.floor(mainPin.offsetWidth / 2),
       'height': mainPin.querySelector('img').offsetHeight + MAIN_PIN_SHARP_END_HEIGHT,
     }
   };
@@ -25,20 +30,52 @@
     var coord = {};
 
     if (pinType === 'circle') {
-      coord.x = Math.floor(mainPin.offsetLeft + mainPinSize.circle.width / 2);
-      coord.y = Math.floor(mainPin.offsetTop + mainPinSize.circle.height / 2);
+      coord.x = Math.floor(mainPin.offsetLeft + mainPinSize.circle.widthHalf);
+      coord.y = Math.floor(mainPin.offsetTop + mainPinSize.circle.heightHalf);
     } else if (pinType === 'sharp') {
-      coord.x = Math.floor(mainPin.offsetLeft + mainPinSize.sharp.width / 2);
+      coord.x = Math.floor(mainPin.offsetLeft + mainPinSize.sharp.widthHalf);
       coord.y = Math.floor(mainPin.offsetTop + mainPinSize.sharp.height);
     }
 
-    return coord.x + ', ' + coord.y;
+    return coord;
+  };
+
+  var setAddressValue = function (pinType) {
+    var coord = getMainPinCoord(pinType).x + ', ' + getMainPinCoord(pinType).y;
+    window.util.setInputValue(inputAddress, coord);
+  };
+
+
+  /*
+   * Манипуляции с главной меткой
+   */
+  var onMainPinMousedown = function (evt) {
+    if (evt.button === window.util.Key.MOUSE_LEFT) {
+
+      if (!window.map.isPageActive) {
+        window.map.activatePage();
+        window.map.isPageActive = true;
+      }
+
+      setAddressValue('sharp');
+
+    }
+  };
+
+  var onMainPinKeydown = function (evt) {
+    if (!window.map.isPageActive) {
+      window.util.isEnterEvent(evt, window.map.activatePage);
+      window.map.isPageActive = true;
+    }
   };
 
 
   window.address = {
     mainPinSize: mainPinSize,
-    getMainPinCoord: getMainPinCoord
+    getMainPinCoord: getMainPinCoord,
+    set: setAddressValue,
+    onMousedown: onMainPinMousedown,
+    onKeydown: onMainPinKeydown,
   };
 
 })();

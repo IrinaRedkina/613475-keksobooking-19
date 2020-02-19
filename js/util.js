@@ -21,19 +21,19 @@
     y: 630
   };
 
-  var isEnterEvent = function (evt, action) {
+  var callIfEnterKeyEvent = function (evt, action) {
     if (evt.key === Key.ENTER) {
       action(evt);
     }
   };
 
-  var isEscEvent = function (evt, action) {
+  var callIfEscKeyEvent = function (evt, action) {
     if (evt.key === Key.ESC) {
       action(evt);
     }
   };
 
-  var isLeftMauseKeyEvent = function (evt, action) {
+  var callIfLeftMauseKeyEvent = function (evt, action) {
     if (evt.button === Key.MOUSE_LEFT) {
       action();
     }
@@ -124,9 +124,9 @@
     setInputValue: setInputValue,
     coordinatorMapsStart: coordinatorMapsStart,
     coordinatorMapsEnd: coordinatorMapsEnd,
-    isEnterEvent: isEnterEvent,
-    isEscEvent: isEscEvent,
-    isLeftMauseKeyEvent: isLeftMauseKeyEvent,
+    callIfEnterKeyEvent: callIfEnterKeyEvent,
+    callIfEscKeyEvent: callIfEscKeyEvent,
+    callIfLeftMauseKeyEvent: callIfLeftMauseKeyEvent,
     Key: Key
   };
 

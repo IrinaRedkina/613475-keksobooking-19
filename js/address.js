@@ -64,7 +64,7 @@
 
   var onMainPinKeydown = function (evt) {
     if (!window.map.isPageActive) {
-      window.util.isEnterEvent(evt, window.map.activatePage);
+      window.util.callIfEnterKeyEvent(evt, window.map.activatePage);
       window.map.isPageActive = true;
     }
   };

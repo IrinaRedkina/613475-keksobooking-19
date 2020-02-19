@@ -81,7 +81,7 @@
    * Закрытие и открытие карточки
    */
   var onDocumentKeydown = function (evt) {
-    window.util.isEscEvent(evt, closeCard);
+    window.util.callIfEscKeyEvent(evt, closeCard);
   };
 
   var closeCard = function () {

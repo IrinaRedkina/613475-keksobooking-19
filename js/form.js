@@ -17,9 +17,10 @@
   };
 
   // поля
+  var filterForm = document.querySelector('.map__filters');
   var adForm = document.querySelector('.ad-form');
   var inputAddress = adForm.querySelector('input[name=address]');
-  var selectTypeHousing = adForm.querySelector('select[name=type]');
+  var selectHousingType = adForm.querySelector('select[name=type]');
   var inputPrice = adForm.querySelector('input[name=price]');
   var selectTimein = adForm.querySelector('select[name=timein]');
   var selectTimeout = adForm.querySelector('select[name=timeout]');
@@ -38,7 +39,7 @@
    * минимальная цена
    */
   var setMinPrice = function () {
-    var selectedType = selectTypeHousing.value;
+    var selectedType = selectHousingType.value;
     var minValue = minPriceMap[selectedType];
 
     inputPrice.setAttribute('min', minValue);
@@ -100,10 +101,16 @@
   inputAddress.setAttribute('readonly', 'readonly');
 
 
+  /*
+   * сброс форм и деактивация страницы
+   */
   var resetPage = function () {
     window.map.isPageActive = false;
     window.map.deactivatePage();
+
     adForm.reset();
+    filterForm.reset();
+
     setMinPrice();
     verifyGuestsValue();
   };
@@ -113,7 +120,7 @@
   verifyGuestsValue();
   disabledCapacityValues();
 
-  selectTypeHousing.addEventListener('change', function () {
+  selectHousingType.addEventListener('change', function () {
     setMinPrice();
   });
 

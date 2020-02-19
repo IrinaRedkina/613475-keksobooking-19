@@ -16,6 +16,7 @@
   var inputAddress = document.querySelector('input[name=address]');
 
   var stylesError = 'color: #fff; padding: 15px; font-size: 12px; font-weight: 500; text-align: center';
+  var errorText = 'Объявления не доступны.';
 
   var defaultCoord = window.address.getMainPinCoord('circle');
   var mainPinSize = window.address.mainPinSize;
@@ -24,15 +25,11 @@
   /*
   * Обработка ответа сервера
   */
-  var onError = function (textError) {
-    var error = document.createElement('div');
-    error.innerText = textError;
-    error.style = stylesError;
-    filtersContainer.replaceChild(error, filterForm);
-
-    setTimeout(function () {
-      filtersContainer.remove();
-    }, 10000);
+  var onError = function (error) {
+    var errorElement = document.createElement('div');
+    errorElement.innerText = errorText + ' ' + error;
+    errorElement.style = stylesError;
+    filtersContainer.replaceChild(errorElement, filterForm);
   };
 
   var onSuccess = function (data) {
@@ -72,7 +69,6 @@
 
     mainPin.style.left = (defaultCoord.x - mainPinSize.circle.widthHalf) + 'px';
     mainPin.style.top = (defaultCoord.y - mainPinSize.circle.heightHalf) + 'px';
-
     window.util.setInputValue(inputAddress, defaultCoord.x + ', ' + defaultCoord.y);
   };
 

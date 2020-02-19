@@ -54,7 +54,7 @@
     });
 
     mapPins.addEventListener('keydown', function (evt) {
-      window.util.isEnterEvent(evt, onMapPinsClick);
+      window.util.callIfEnterKeyEvent(evt, onMapPinsClick);
     });
 
   };

@@ -2,14 +2,9 @@
 
 (function () {
 
-  var TYPES = {
-    'palace': 'Дворец',
-    'flat': 'Квартира',
-    'house': 'Дом',
-    'bungalo': 'Бунгало'
-  };
-
   var cardAdvertTemplate = document.querySelector('#card').content.querySelector('.map__card');
+  var map = document.querySelector('.map');
+  var cardBeforeElement = map.querySelector('.map__filters-container');
 
   var createPhotosElements = function (photosWrapper, photos) {
     var fragment = document.createDocumentFragment();
@@ -40,9 +35,7 @@
     element.querySelector('.popup__text--address').innerText = advert.offer.address;
     element.querySelector('.popup__text--time').innerText = timesString;
     element.querySelector('.popup__text--capacity').innerText = roomsAndGuestsString;
-
-    // тип жилья
-    element.querySelector('.popup__type').innerText = TYPES[advert.offer.type];
+    element.querySelector('.popup__type').innerText = window.data.typesHousingMap[advert.offer.type];
 
     // удобства
     var featuresWrapper = element.querySelector('.popup__features');
@@ -77,15 +70,48 @@
     return element;
   };
 
-  var renderCard = function (adverts, index, wrapperElement, beforeElement) {
+  var renderCard = function (adverts, index) {
     var fragment = document.createDocumentFragment();
     fragment.appendChild(createCard(adverts[index]));
-    wrapperElement.insertBefore(fragment, beforeElement);
+    map.insertBefore(fragment, cardBeforeElement);
+  };
+
+
+  /*
+   * Закрытие и открытие карточки
+   */
+  var onDocumentKeydown = function (evt) {
+    window.util.callIfEscKeyEvent(evt, closeCard);
+  };
+
+  var closeCard = function () {
+    var card = map.querySelector('.map__card');
+
+    if (card !== null) {
+      card.remove();
+      window.pin.clearActiveClass();
+    }
+
+    document.removeEventListener('keydown', onDocumentKeydown);
+  };
+
+  var openCard = function (adverts, advertId) {
+    renderCard(adverts, advertId);
+
+    var closeButton = map.querySelector('.popup__close');
+
+    closeButton.addEventListener('click', function () {
+      closeCard();
+    });
+
+    document.addEventListener('keydown', onDocumentKeydown);
   };
 
 
   window.card = {
-    render: renderCard
+    render: renderCard,
+    close: closeCard,
+    open: openCard,
   };
 
 })();

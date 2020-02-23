@@ -1,9 +1,26 @@
 'use strict';
 
 (function () {
+
+  var minPriceMap = {
+    'bungalo': 0,
+    'flat': 1000,
+    'house': 5000,
+    'palace': 10000
+  };
+
+  var allowedCapacityValuesMap = {
+    '1': ['1'],
+    '2': ['2', '1'],
+    '3': ['3', '2', '1'],
+    '100': ['0']
+  };
+
+  // поля
+  var filterForm = document.querySelector('.map__filters');
   var adForm = document.querySelector('.ad-form');
   var inputAddress = adForm.querySelector('input[name=address]');
-  var selectType = adForm.querySelector('select[name=type]');
+  var selectHousingType = adForm.querySelector('select[name=type]');
   var inputPrice = adForm.querySelector('input[name=price]');
   var selectTimein = adForm.querySelector('select[name=timein]');
   var selectTimeout = adForm.querySelector('select[name=timeout]');
@@ -11,117 +28,123 @@
   var selectCapacity = adForm.querySelector('select[name=capacity]');
   var selectCapacityOptions = selectCapacity.options;
 
+  // кнопки
+  var resetButton = adForm.querySelector('.ad-form__reset');
+
+  var minPiceLabel = 'Цена за ночь от #price# руб';
+  var capacityError = 'Для выбранного колличества комнат нужно выбрать другое колличество мест';
+
 
   /*
    * минимальная цена
    */
-  var setMinPrice = function (selectedType) {
-    var minValue = 0;
-
-    if (selectedType === 'flat') {
-      minValue = 1000;
-    } else if (selectedType === 'house') {
-      minValue = 5000;
-    } else if (selectedType === 'palace') {
-      minValue = 10000;
-    }
+  var setMinPrice = function () {
+    var selectedType = selectHousingType.value;
+    var minValue = minPriceMap[selectedType];
 
     inputPrice.setAttribute('min', minValue);
-    adForm.querySelector('label[for=price]').innerText = 'Цена за ночь от ' + minValue + ' руб.';
+    inputPrice.setAttribute('placeholder', minValue);
+
+    adForm.querySelector('label[for=price]').innerText = minPiceLabel.replace('#price#', minValue);
   };
-
-  var selectTypeDefaultValue = selectType.value;
-  setMinPrice(selectType.value);
-
-  selectType.addEventListener('change', function (evt) {
-    setMinPrice(evt.target.value);
-  });
-
-  adForm.addEventListener('reset', function () {
-    setMinPrice(selectTypeDefaultValue);
-  });
-
 
   /*
    * синхронизация полей заезда и выезда
    */
-  var onSelectTimeChange = function (evt) {
-    if (evt.target.name === 'timeout') {
-      selectTimein.value = evt.target.value;
-    } else if (evt.target.name === 'timein') {
-      selectTimeout.value = evt.target.value;
+  var syncTimes = function (evt) {
+    var timeValue = evt.target.value;
+
+    switch (evt.target.name) {
+      case 'timeout':
+        selectTimein.value = timeValue;
+        break;
+      case 'timein':
+        selectTimeout.value = timeValue;
+        break;
     }
   };
-
-  selectTimein.addEventListener('change', onSelectTimeChange);
-  selectTimeout.addEventListener('change', onSelectTimeChange);
-
 
   /*
-   * зависимость кол-ва гостей от кол-ва комнат
+   * зависимость кол-ва мест от кол-ва комнат
    */
-  var getAllowedValues = function (numberRooms) {
-    var allowedValues = [];
+  var verifyGuestsValue = function () {
+    var selectedRooms = selectRooms.value;
+    var selectedGuests = selectCapacity.value;
+    var allowedCapacityValues = allowedCapacityValuesMap[selectedRooms];
 
-    switch (numberRooms) {
-      case '1':
-        allowedValues.push('1');
-        break;
-      case '2':
-        allowedValues.push('1', '2');
-        break;
-      case '3':
-        allowedValues.push('1', '2', '3');
-        break;
-      case '100':
-        allowedValues.push('0');
-        break;
-    }
-
-    return allowedValues;
-  };
-
-  var validateSelectCapacity = function (allowedValues) {
-    if (allowedValues.indexOf(selectCapacity.value) === -1) {
-      selectCapacity.setCustomValidity('Выбирайте другое кол-во комнат или гостей');
+    if (allowedCapacityValues.indexOf(selectedGuests) === -1) {
+      selectCapacity.setCustomValidity(capacityError);
     } else {
       selectCapacity.setCustomValidity('');
     }
   };
 
-  var lockSelectCapacityOptions = function (allowedValues) {
+  var disabledCapacityValues = function () {
+    var selectedRooms = selectRooms.value;
+    var allowedCapacityValues = allowedCapacityValuesMap[selectedRooms];
+
     for (var i = 0; i < selectCapacityOptions.length; i++) {
-      if (allowedValues.indexOf(selectCapacityOptions[i].value) === -1) {
-        selectCapacityOptions[i].disabled = true;
+      var option = selectCapacityOptions[i];
+      var optionValue = option.value;
+
+      if (allowedCapacityValues.indexOf(optionValue) === -1) {
+        option.disabled = true;
       } else {
-        selectCapacityOptions[i].disabled = false;
+        option.disabled = false;
       }
     }
   };
-
-  var onSelectRoomsChange = function (evt) {
-    var allowedValues = getAllowedValues(evt.target.value);
-    validateSelectCapacity(allowedValues);
-    lockSelectCapacityOptions(allowedValues);
-  };
-
-  var onSelectCapacityChange = function () {
-    var allowedValues = getAllowedValues(selectRooms.value);
-    validateSelectCapacity(allowedValues);
-  };
-
-  var allowedValues = getAllowedValues(selectRooms.value);
-  validateSelectCapacity(allowedValues);
-  lockSelectCapacityOptions(allowedValues);
-
-  selectRooms.addEventListener('change', onSelectRoomsChange);
-  selectCapacity.addEventListener('change', onSelectCapacityChange);
-
 
   /*
    * адрес
    */
   inputAddress.setAttribute('readonly', 'readonly');
-  window.util.setInputValue(inputAddress, window.address.getMainPinCoord('circle'));
+
+
+  /*
+   * сброс форм и деактивация страницы
+   */
+  var resetPage = function () {
+    window.map.isPageActive = false;
+    window.map.deactivatePage();
+
+    adForm.reset();
+    filterForm.reset();
+
+    setMinPrice();
+    verifyGuestsValue();
+  };
+
+
+  setMinPrice();
+  verifyGuestsValue();
+  disabledCapacityValues();
+
+  selectHousingType.addEventListener('change', function () {
+    setMinPrice();
+  });
+
+  selectTimein.addEventListener('change', function (evt) {
+    syncTimes(evt);
+  });
+
+  selectTimeout.addEventListener('change', function (evt) {
+    syncTimes(evt);
+  });
+
+  selectRooms.addEventListener('change', function () {
+    verifyGuestsValue();
+    disabledCapacityValues();
+  });
+
+  selectCapacity.addEventListener('change', function () {
+    verifyGuestsValue();
+    disabledCapacityValues();
+  });
+
+  resetButton.addEventListener('click', function () {
+    resetPage();
+  });
+
 
 })();

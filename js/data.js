@@ -2,7 +2,14 @@
 
 (function () {
 
-  var ADVERTS = {
+  var typesHousingMap = {
+    'palace': 'Дворец',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'bungalo': 'Бунгало'
+  };
+
+  var MOCK = {
     'CHECKIN_TIMES': ['12:00', '13:00', '14:00'],
     'CHECKOUT_TIMES': ['12:00', '13:00', '14:00'],
     'FEATURES': ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
@@ -11,13 +18,12 @@
       'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
       'http://o0.github.io/assets/images/tokyo/hotel3.jpg',
     ],
-    'TYPES': ['palace', 'flat', 'house', 'bungalo'],
-    'TYPES_RUS': ['Дворец', 'Квартира', 'Дом', 'Бунгало'],
+    'TYPES': ['palace', 'flat', 'house', 'bungalo']
   };
 
-  var ADVERTS_COUNT = 8;
+  var MOCK_COUNT = 8;
 
-  var generateAdvert = function (advertInfo, avatarFileNumber) {
+  var generateMock = function (advertInfo, avatarFileNumber) {
     var object = {
       'author': {
         'avatar': 'img/avatars/user0' + avatarFileNumber + '.png'
@@ -44,20 +50,21 @@
     return object;
   };
 
-  var generateAdverts = function (count) {
-    var objects = [];
+  var generateMockArray = function (count) {
+    var mockArray = [];
 
     for (var i = 1; i <= count; i++) {
-      var object = generateAdvert(ADVERTS, i);
-      objects.push(object);
+      var object = generateMock(MOCK, i);
+      mockArray.push(object);
     }
 
-    return objects;
+    return mockArray;
   };
 
 
   window.data = {
-    adverts: generateAdverts(ADVERTS_COUNT)
+    mock: generateMockArray(MOCK_COUNT),
+    typesHousingMap: typesHousingMap
   };
 
 })();

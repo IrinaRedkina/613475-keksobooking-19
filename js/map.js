@@ -47,8 +47,7 @@
     map.classList.remove('map--faded');
 
     window.util.changeAttrDisabled(allGroupsFields, 'remove');
-
-    mainPin.removeEventListener('mousedown', window.address.onMousedown);
+    window.address.set('sharp');
     mainPin.removeEventListener('keydown', window.address.onKeydown);
 
     window.backend.load(onSuccess, onError);

@@ -10,6 +10,7 @@
   var pinSize = window.util.getHiddenElementSize(pinTemplate);
   var pinSizeWidthHalf = pinSize.width / 2;
 
+
   var createPin = function (advert, id) {
     var element = pinTemplate.cloneNode(true);
 
@@ -22,15 +23,21 @@
     return element;
   };
 
+
   var renderPins = function (adverts) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < adverts.length; i++) {
-      fragment.appendChild(createPin(adverts[i], i));
-    }
+    adverts.forEach(function (advert, index) {
+      var id = advert.id === undefined ? index : advert.id;
+
+      if (advert.offer !== undefined) {
+        fragment.appendChild(createPin(advert, id));
+      }
+    });
 
     mapPins.appendChild(fragment);
   };
+
 
   var clickPin = function (adverts) {
 

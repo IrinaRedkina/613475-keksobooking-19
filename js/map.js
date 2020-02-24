@@ -33,8 +33,11 @@
   };
 
   var onSuccess = function (data) {
-    window.pin.render(data);
-    window.pin.click(data);
+    var adverts = window.filter.quantity(data);
+
+    window.filter.pins(adverts);
+    window.pin.render(adverts);
+    window.pin.click(adverts);
   };
 
 

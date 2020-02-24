@@ -18,7 +18,7 @@
   var stylesError = 'color: #fff; padding: 15px; font-size: 12px; font-weight: 500; text-align: center';
   var errorText = 'Объявления не доступны.';
 
-  var defaultCoord = window.address.getMainPinCoord('circle');
+  var mainPinDefaultCoord = window.address.getMainPinCoord('circle');
   var mainPinSize = window.address.mainPinSize;
 
 
@@ -66,9 +66,9 @@
     window.pin.remove();
     window.card.close();
 
-    mainPin.style.left = (defaultCoord.x - mainPinSize.circle.widthHalf) + 'px';
-    mainPin.style.top = (defaultCoord.y - mainPinSize.circle.heightHalf) + 'px';
-    window.util.setInputValue(inputAddress, defaultCoord.x + ', ' + defaultCoord.y);
+    mainPin.style.left = (mainPinDefaultCoord.x - mainPinSize.circle.widthHalf) + 'px';
+    mainPin.style.top = (mainPinDefaultCoord.y - mainPinSize.circle.heightHalf) + 'px';
+    window.util.setInputValue(inputAddress, mainPinDefaultCoord.x + ', ' + mainPinDefaultCoord.y);
   };
 
   deactivatePage();

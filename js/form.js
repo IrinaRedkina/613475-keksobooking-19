@@ -28,8 +28,14 @@
   var selectCapacity = adForm.querySelector('select[name=capacity]');
   var selectCapacityOptions = selectCapacity.options;
 
+  // Сообщения
+  var mainWrapper = document.querySelector('main');
+  var successTemplate = document.querySelector('#success').content.querySelector('.success');
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+
   // кнопки
   var resetButton = adForm.querySelector('.ad-form__reset');
+  var submitButton = adForm.querySelector('.ad-form__submit');
 
   var minPiceLabel = 'Цена за ночь от #price# руб';
   var capacityError = 'Для выбранного колличества комнат нужно выбрать другое колличество мест';
@@ -113,6 +119,7 @@
 
     setMinPrice();
     verifyGuestsValue();
+    disabledCapacityValues();
   };
 
 
@@ -144,6 +151,77 @@
 
   resetButton.addEventListener('click', function () {
     resetPage();
+  });
+
+
+  /*
+   * Отправка формы
+   */
+  var onDocumentKeydown = function (evt) {
+    window.util.callIfEscKeyEvent(evt, closeMessage);
+  };
+
+  var onDocumentClick = function (evt) {
+    if (evt.target === document.querySelector('.error__message') ||
+        evt.target === document.querySelector('.success__message')) {
+      return;
+    }
+
+    closeMessage();
+  };
+
+  var showMessage = function (message) {
+    var errorText = arguments[1];
+
+    if (message === 'success') {
+      var successMessage = successTemplate.cloneNode(true);
+      mainWrapper.appendChild(successMessage);
+    }
+
+    if (message === 'error') {
+      var errorMessage = errorTemplate.cloneNode(true);
+
+      if (errorText !== undefined) {
+        errorMessage.querySelector('.error__message').innerText = errorText;
+      }
+
+      mainWrapper.appendChild(errorMessage);
+    }
+
+    document.addEventListener('keydown', onDocumentKeydown);
+    document.addEventListener('click', onDocumentClick);
+  };
+
+  var closeMessage = function () {
+    var successMessage = mainWrapper.querySelector('.success');
+    var errorMessage = mainWrapper.querySelector('.error');
+
+    if (successMessage !== null) {
+      successMessage.remove();
+    }
+
+    if (errorMessage !== null) {
+      errorMessage.remove();
+    }
+
+    document.removeEventListener('keydown', onDocumentKeydown);
+    document.removeEventListener('click', onDocumentClick);
+  };
+
+  var onSuccess = function () {
+    showMessage('success');
+    resetPage();
+  };
+
+  var onError = function (errorText) {
+    showMessage('error', errorText);
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    var formData = new FormData(adForm);
+    window.backend.save(formData, onSuccess, onError);
+    submitButton.blur();
+    evt.preventDefault();
   });
 
 

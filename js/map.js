@@ -1,5 +1,7 @@
 'use strict';
 
+// window.debounce();
+
 (function () {
 
   var map = document.querySelector('.map');
@@ -21,7 +23,6 @@
   var mainPinDefaultCoord = window.address.getMainPinCoord('circle');
   var mainPinSize = window.address.mainPinSize;
 
-
   /*
   * Обработка ответа сервера
   */
@@ -33,27 +34,24 @@
   };
 
   var onSuccess = function (data) {
-    var adverts = window.filter.quantity(data);
-
-    window.filter.pins(adverts);
-    window.pin.render(adverts);
-    window.pin.click(adverts);
-  };
-
-
-  /*
-   * Активация, деактивация страницы
-   */
-  var activatePage = function () {
-    adForm.classList.remove('ad-form--disabled');
-    filterForm.classList.remove('map__filters--disabled');
-    map.classList.remove('map--faded');
+    window.filter.pins(data);
+    window.pin.render(data);
+    window.pin.click(data);
 
     window.util.changeAttrDisabled(allGroupsFields, 'remove');
-    window.address.set('sharp');
-    mainPin.removeEventListener('keydown', window.address.onKeydown);
+  };
+
+  /*
+  * Активация, деактивация страницы
+  */
+  var activatePage = function () {
+    map.classList.remove('map--faded');
+    adForm.classList.remove('ad-form--disabled');
+    filterForm.classList.remove('map__filters--disabled');
 
     window.backend.load(onSuccess, onError);
+    window.address.set('sharp');
+    mainPin.removeEventListener('keydown', window.address.onKeydown);
   };
 
   var deactivatePage = function () {
@@ -65,6 +63,7 @@
 
     mainPin.addEventListener('mousedown', window.address.onMousedown);
     mainPin.addEventListener('keydown', window.address.onKeydown);
+    filterForm.removeEventListener('change', window.filter.onFilterFormChange);
 
     window.pin.remove();
     window.card.close();

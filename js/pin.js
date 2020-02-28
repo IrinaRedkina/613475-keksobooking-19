@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-
+  var LIMIT_PINS = 5;
   var map = document.querySelector('.map');
   var mapPins = map.querySelector('.map__pins');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -26,13 +26,16 @@
 
   var renderPins = function (adverts) {
     var fragment = document.createDocumentFragment();
+    var count = 0;
 
     adverts.forEach(function (advert, index) {
       var id = advert.id === undefined ? index : advert.id;
 
-      if (advert.offer !== undefined) {
+      if (advert.offer !== undefined && count < LIMIT_PINS) {
         fragment.appendChild(createPin(advert, id));
       }
+
+      count++;
     });
 
     mapPins.appendChild(fragment);

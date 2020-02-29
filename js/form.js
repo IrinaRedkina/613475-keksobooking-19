@@ -2,13 +2,13 @@
 
 (function () {
 
+  var HOUSING_PHOTO_WIDTH = 70;
   var minPriceMap = {
     'bungalo': 0,
     'flat': 1000,
     'house': 5000,
     'palace': 10000
   };
-
   var allowedCapacityValuesMap = {
     '1': ['1'],
     '2': ['2', '1'],
@@ -28,10 +28,21 @@
   var selectCapacity = adForm.querySelector('select[name=capacity]');
   var selectCapacityOptions = selectCapacity.options;
 
+  // фото
+  var fileInput = adForm.querySelectorAll('input[type=file]');
+  var avatarInputName = 'avatar';
+  var housingPhotoInputName = 'images';
+  var avatarImg = adForm.querySelector('.ad-form-header__preview img');
+  var avatarDefaultSrc = avatarImg.getAttribute('src');
+  var housingPhotoContainer = adForm.querySelector('.ad-form__photo');
+  var housingPhotoAltText = 'Фото жилья ';
+  var allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
   // Сообщения
   var mainWrapper = document.querySelector('main');
   var successTemplate = document.querySelector('#success').content.querySelector('.success');
   var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var errorUploadFile = 'Загружать можно только изображения с разрешением jpg, png и gif';
 
   // кнопки
   var resetButton = adForm.querySelector('.ad-form__reset');
@@ -40,6 +51,63 @@
   var minPiceLabel = 'Цена за ночь от #price# руб';
   var capacityError = 'Для выбранного колличества комнат нужно выбрать другое колличество мест';
 
+  /*
+   * Установка фото
+   */
+  var renderPhoto = function (src, alt) {
+    var existingImage = housingPhotoContainer.querySelector('img');
+
+    if (existingImage === null) {
+      var image = document.createElement('img');
+      image.setAttribute('src', src);
+      image.setAttribute('alt', alt);
+      image.setAttribute('width', HOUSING_PHOTO_WIDTH + 'px');
+      housingPhotoContainer.appendChild(image);
+    } else {
+      existingImage.setAttribute('src', src);
+      existingImage.setAttribute('alt', alt);
+    }
+  };
+
+  var readFile = function (file, onload) {
+    var reader = new FileReader();
+
+    reader.onload = function (readerEvt) {
+      onload(readerEvt.target.result);
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  var onFileInputChange = function (evt) {
+    var file = evt.target.files[0];
+
+    if (allowedFileTypes.indexOf(file.type) === -1) {
+      showMessage('error', errorUploadFile);
+      return;
+    }
+
+    if (evt.target.name === avatarInputName && file) {
+      readFile(file, function (result) {
+        avatarImg.setAttribute('src', result);
+      });
+    }
+
+    if (evt.target.name === housingPhotoInputName) {
+      readFile(file, function (result) {
+        renderPhoto(result, housingPhotoAltText + file.name);
+      });
+    }
+  };
+
+  fileInput.forEach(function (input) {
+    input.addEventListener('change', onFileInputChange);
+  });
+
+  var clearImgsSrc = function () {
+    housingPhotoContainer.innerHTML = '';
+    avatarImg.setAttribute('src', avatarDefaultSrc);
+  };
 
   /*
    * минимальная цена
@@ -120,8 +188,8 @@
     setMinPrice();
     verifyGuestsValue();
     disabledCapacityValues();
+    clearImgsSrc();
   };
-
 
   setMinPrice();
   verifyGuestsValue();
@@ -152,7 +220,6 @@
   resetButton.addEventListener('click', function () {
     resetPage();
   });
-
 
   /*
    * Отправка формы
@@ -223,6 +290,5 @@
     submitButton.blur();
     evt.preventDefault();
   });
-
 
 })();

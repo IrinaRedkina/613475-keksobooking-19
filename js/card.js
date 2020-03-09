@@ -2,6 +2,13 @@
 
 (function () {
 
+  var typesHousingMap = {
+    'palace': 'Дворец',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'bungalo': 'Бунгало'
+  };
+
   var cardAdvertTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var map = document.querySelector('.map');
   var cardBeforeElement = map.querySelector('.map__filters-container');
@@ -35,7 +42,7 @@
     element.querySelector('.popup__text--address').innerText = advert.offer.address;
     element.querySelector('.popup__text--time').innerText = timesString;
     element.querySelector('.popup__text--capacity').innerText = roomsAndGuestsString;
-    element.querySelector('.popup__type').innerText = window.data.typesHousingMap[advert.offer.type];
+    element.querySelector('.popup__type').innerText = typesHousingMap[advert.offer.type];
 
     // удобства
     var featuresWrapper = element.querySelector('.popup__features');

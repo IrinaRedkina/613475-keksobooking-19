@@ -33,12 +33,6 @@
     }
   };
 
-  var callIfLeftMauseKeyEvent = function (evt, action) {
-    if (evt.button === Key.MOUSE_LEFT) {
-      action();
-    }
-  };
-
   var getRandomNumber = function (min, max) {
     return Math.floor(min + Math.random() * (max - min + 1));
   };
@@ -126,7 +120,6 @@
     coordinatorMapsEnd: coordinatorMapsEnd,
     callIfEnterKeyEvent: callIfEnterKeyEvent,
     callIfEscKeyEvent: callIfEscKeyEvent,
-    callIfLeftMauseKeyEvent: callIfLeftMauseKeyEvent,
     Key: Key
   };
 

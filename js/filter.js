@@ -37,7 +37,7 @@
   };
 
   var checkFilterValuesEmpty = function () {
-    return (Object.keys(filterValues).length === 0 && filterValues.constructor === Object) ? true : false;
+    return Object.keys(filterValues).length === 0 && filterValues.constructor === Object;
   };
 
   var filterByValue = function (key, value, pins) {

@@ -104,7 +104,7 @@
     input.addEventListener('change', onFileInputChange);
   });
 
-  var clearImgsSrc = function () {
+  var clearImgSrc = function () {
     housingPhotoContainer.innerHTML = '';
     avatarImg.setAttribute('src', avatarDefaultSrc);
   };
@@ -161,11 +161,7 @@
       var option = selectCapacityOptions[i];
       var optionValue = option.value;
 
-      if (allowedCapacityValues.indexOf(optionValue) === -1) {
-        option.disabled = true;
-      } else {
-        option.disabled = false;
-      }
+      option.disabled = allowedCapacityValues.indexOf(optionValue) === -1;
     }
   };
 
@@ -188,7 +184,7 @@
     setMinPrice();
     verifyGuestsValue();
     disabledCapacityValues();
-    clearImgsSrc();
+    clearImgSrc();
   };
 
   setMinPrice();
